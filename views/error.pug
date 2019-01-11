@@ -1,6 +1,14 @@
 extends layout
 
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+  if error.status == 404
+    .flex-col-center(style="height: 100vh;")
+      h1(style="margin: 0;") 404
+      div(style="height: 10px;")
+      h4(style="margin: 0;") (ಥ﹏ಥ)
+      div(style="height: 40px;")
+      a(href="/") Back to home
+  else
+    h1= message
+    h2= error.status
+    pre #{error.stack}
