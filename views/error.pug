@@ -7,7 +7,7 @@ block content
       div(style="height: 10px;")
       h4(style="margin: 0;") (ಥ﹏ಥ)
       div(style="height: 40px;")
-      a(href="/") Back to home
+      a(href="/" onclick="gtag('event', 'click', {'send_to': 'UA-132347405-1','event_category': '404','event_label': 'go to home'});") Back to home
   else
     h1= message
     h2= error.status
