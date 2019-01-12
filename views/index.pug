@@ -1,7 +1,9 @@
 extends layout
 
 block content
-  .flex-col-center(style="height: 100vh;")
+  #bkg-sketch-holder
+  .flex-col-center
+    div(style="height: 20px;")
     .profile-pic-container.flex-col-center
       img.profile-pic(src="https://res.cloudinary.com/lavielle/image/upload/c_scale,w_700,f_auto/v1547228593/samuelmann.co/profile-pic-bw.png")
     h1 Samuel Mann
@@ -24,4 +26,4 @@ block content
         img.social-icon(src="/assets/icons/mail-black.svg")
         div samuelcmann[at]gmail[dot]com
     
-    div(style="height: 80px;")
+    div(style="height: 20px;")
