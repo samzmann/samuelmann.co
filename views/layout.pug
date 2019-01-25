@@ -1,6 +1,6 @@
 doctype html
 html
-  head
+  block head
     title Samuel Mann
     meta(charset="utf-8")
     meta(name='viewport' content='width=device-width,initial-scale=1.0')
@@ -12,10 +12,6 @@ html
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'UA-132347405-1');
-      
-    //- Bkg p5 sketch
-    script(src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js')
-    script(src='/js/bkg-sketch.js')
 
   body
     block content

@@ -1,5 +1,10 @@
 extends layout
 
+append head
+  //- Bkg p5 sketch
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js')
+  script(src='/js/bkg-sketch.js')
+
 block content
   #bkg-sketch-holder
   .flex-col-center
