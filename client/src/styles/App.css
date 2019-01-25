@@ -4,9 +4,14 @@
   position: absolute;
   width: 100%;
   height: 100%;
+  padding: 50px;
   background: #282828;
   color: #66ff66;
   font-family: 'IBM Plex Mono', monospace;
+}
+
+.App-line {
+  margin-bottom: 5px;
 }
 
 .App-usrmsg {
@@ -18,5 +23,5 @@
 }
 
 .App-sysmsg::before {
-  content: '> '
+  content: '- '
 }

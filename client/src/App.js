@@ -1,22 +1,49 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './styles/App.css';
+import MsgForm from './components/MsgForm'
+import { callApi } from './utils'
 
 class App extends Component {
 
+  state = {
+    messages: [],
+    msgInProgress: 'hey'
+  }
+
   componentDidMount(){
-    console.log('mounted');
-    fetch('/api')
-      .then(res => res.json())
-      .then(resJson => { console.log(resJson) })
-      .catch(err => { console.log(err) })
+
+    callApi()
+      .then(res => {
+        console.log(res)
+        this.setState({ messages: res.messages })
+      })
+      .catch(err => {console.log(err)})
+
+  }
+
+  renderMessages = () => {
+    const { messages } = this.state
+    return messages.map(msg => {
+      return <div key={msg.id} className={`App-line ${msg.type == 'user' ? "App-usrmsg" : "App-sysmsg"}`}>{msg.msg}</div>
+    })
+  }
+
+  addNewMessage = (msg) => {
+    const { messages } = this.state
+    const newMsg = {
+      id: messages.length,
+      type: 'user',
+      msg
+    }
+    this.setState({ messages: [...this.state.messages, newMsg] })
   }
 
   render() {
     return (
       <div className="App">
-        <div className="App-sysmsg">welcome, let's chat</div>
-        <div className="App-usrmsg">hi</div>
+        <div className="App-line App-sysmsg">welcome, let's chat</div>
+        {this.renderMessages()}
+        <MsgForm addNewMessage={this.addNewMessage}/>
       </div>
     );
   }
