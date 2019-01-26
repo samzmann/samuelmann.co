@@ -62,3 +62,6 @@ typings/
 
 # react app build
 client/build
+
+# config files
+config

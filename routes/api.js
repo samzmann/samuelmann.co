@@ -1,17 +1,35 @@
 var express = require('express');
 var router = express.Router();
+var Message = require('../models/message');
 
 router.get('/', function(req, res, next) {
-  obj = {
-    route: '/api',
-    messages: [
-      { id: '0', type: 'system', msg: 'session loading...' },
-      { id: '1', type: 'system', msg: 'session started!' },
-      { id: '2', type: 'user', msg: 'hey!' },
-      { id: '3', type: 'user', msg: "what's up?" },
-    ]
-  }
-  res.json(obj);
+  Message
+    .find()
+    .exec((err, results) => {
+      if (err) {
+        console.log(err);
+        res.send(err)
+        return handleError(err)
+      }
+
+      console.log(results);
+
+      res.json(results)
+    })
 });
+
+router.post('/msg', function(req, res, next) {
+  console.log(req.body);
+
+  const m = new Message({
+    msg: req.body.msg,
+    type: req.body.type,
+    timestamp: req.body.timestamp
+  })
+
+  m.save(err => {
+    if (err) return handleError(err)
+  })
+})
 
 module.exports = router;

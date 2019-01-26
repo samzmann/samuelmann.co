@@ -1,22 +1,37 @@
 import React, { Component } from 'react';
 import '../styles/MsgForm.css';
+import { postMessage } from '../utils'
 
 export default class MsgForm extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = {value: ''};
+    super(props)
+    this.state = {value: ''}
+  }
 
-    // this.handleChange = this.handleChange.bind(this);
-    // this.handleSubmit = this.handleSubmit.bind(this);
+  componentDidMount(){
+    this._input.focus();
   }
 
   handleChange = (event) => {
-    this.setState({value: event.target.value});
+    this.setState({value: event.target.value})
   }
 
   handleSubmit = (event) => {
-    this.props.addNewMessage(this.state.value)
-    this.setState({ value: '' })
+    if (this.state.value.length > 0) {
+
+      const data = {
+        msg: this.state.value,
+        type: 'user',
+        timestamp: Date.now()
+      }
+
+      this.props.addNewMessage(data)
+
+      postMessage(data)
+        .then(() => this.setState({ value: '' }))
+        .catch(err => console.log(err))
+      this.setState({ value: '' })
+    }
     event.preventDefault();
   }
 
@@ -27,9 +42,10 @@ export default class MsgForm extends React.Component {
         {'>'}
         <div style={{width: '10px'}}/>
         <input
+          ref={r => { this._input = r }}
           className="MsgForm-input"
           type="text"
-          autofocus="true"
+          // autofocus="true"
           value={this.state.value}
           onChange={this.handleChange}
         />
