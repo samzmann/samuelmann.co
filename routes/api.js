@@ -11,9 +11,6 @@ router.get('/', function(req, res, next) {
         res.send(err)
         return handleError(err)
       }
-
-      console.log(results);
-
       res.json(results)
     })
 });

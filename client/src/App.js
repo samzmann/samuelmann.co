@@ -2,15 +2,19 @@ import React, { Component } from 'react';
 import './styles/App.css';
 import MsgForm from './components/MsgForm'
 import { getAllMessages } from './utils'
+import socket from './socket'
 
 class App extends Component {
 
   state = {
     messages: [],
-    msgInProgress: 'hey'
+    msgInProgress: 'hey',
+    client: socket()
   }
 
   componentDidMount(){
+
+    console.log(this.state.client);
 
     getAllMessages()
       .then(res => {
@@ -59,17 +63,21 @@ class App extends Component {
         msg: msg.msg,
         timestamp: msg.timestamp
       }
+      // this.state.client.sendMsg(newMsg)
       this.setState({ messages: [...this.state.messages, newMsg] }, () => {
         resolve(this.state.messages)
       })
     })
   }
 
+
+
   render() {
     return (
       <div className="App">
         {this.renderMessages()}
         <MsgForm addNewMessage={this.addNewMessage}/>
+        <button onClick={() => {this.state.client.joinRoom('xxxx')}}>Join room</button>
       </div>
     );
   }
