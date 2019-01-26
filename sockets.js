@@ -11,6 +11,12 @@ sockets.init = (server) => {
       socket.join(room_id);
     })
 
+    socket.on('send msg', data => {
+      console.log(data.msg);
+      socket.broadcast.to(data.room_id).emit('receive msg', data);
+      // socket.broadcast.emit('receive msg', data);
+    })
+
     io.on('disconnect', () => {
       console.log('user disconnected');
     })

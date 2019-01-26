@@ -8,13 +8,15 @@ class App extends Component {
 
   state = {
     messages: [],
-    msgInProgress: 'hey',
-    client: socket()
+    client: socket(),
+    room_id: null
   }
 
   componentDidMount(){
 
     console.log(this.state.client);
+
+    this.state.client.receiveMsg(this.receiveMsg)
 
     getAllMessages()
       .then(res => {
@@ -42,6 +44,10 @@ class App extends Component {
 
   }
 
+  componentWillUnmount() {
+    this.state.client.unreceiveMsg()
+  }
+
   renderMessages = () => {
     const { messages } = this.state
     return messages.map((msg, index) => {
@@ -50,7 +56,7 @@ class App extends Component {
       const dM1 = messages[index-1] ? new Date(messages[index-1].timestamp) : null
       const showDateInfo = !dM1 || ((d - dM1) > 60000) || dM1 > d
 
-      return <div key={msg._id} className={`App-line ${msg.type === 'user' ? "App-usrmsg" : "App-sysmsg"}`}>{showDateInfo ? `[${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}]` : ''} {msg.msg}</div>
+      return <div key={msg._id} className={`App-line ${msg.type === 'user' ? "App-usrmsg" : "App-sysmsg"}`}>{showDateInfo ? `[${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours() < 10 ? '0' + d.getHours() : d.getHours()}:${d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes()}]` : ''} {msg.msg}</div>
     })
   }
 
@@ -61,23 +67,45 @@ class App extends Component {
         _id: messages.length,
         type: msg.type,
         msg: msg.msg,
+        room_id: this.state.room_id,
         timestamp: msg.timestamp
       }
-      // this.state.client.sendMsg(newMsg)
       this.setState({ messages: [...this.state.messages, newMsg] }, () => {
         resolve(this.state.messages)
       })
     })
   }
 
+  sendMsg = (msg) => {
+    const { messages } = this.state
+    const newMsg = {
+      _id: messages.length,
+      type: msg.type,
+      msg: msg.msg,
+      room_id: this.state.room_id,
+      timestamp: msg.timestamp
+    }
+    this.state.client.sendMsg(newMsg)
+  }
 
+  receiveMsg = (data) => {
+    console.log(data);
+    this.addNewMessage(data)
+      .then(messages => {
+        console.log('success!');
+      })
+  }
+
+  joinRoom = (room_id) => {
+    this.state.client.joinRoom(room_id)
+  }
 
   render() {
     return (
       <div className="App">
         {this.renderMessages()}
-        <MsgForm addNewMessage={this.addNewMessage}/>
-        <button onClick={() => {this.state.client.joinRoom('xxxx')}}>Join room</button>
+        <MsgForm addNewMessage={this.addNewMessage} sendMsg={this.sendMsg}/>
+        <button onClick={() => {this.joinRoom(this.state.room_id)}}>Join room</button>
       </div>
     );
   }

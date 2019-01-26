@@ -26,10 +26,11 @@ export default class MsgForm extends React.Component {
       }
 
       this.props.addNewMessage(data)
+      this.props.sendMsg(data)
 
-      postMessage(data)
-        .then(() => this.setState({ value: '' }))
-        .catch(err => console.log(err))
+      // postMessage(data)
+      //   .then(() => this.setState({ value: '' }))
+      //   .catch(err => console.log(err))
       this.setState({ value: '' })
     }
     event.preventDefault();
