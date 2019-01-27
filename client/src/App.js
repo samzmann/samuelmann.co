@@ -118,6 +118,15 @@ class App extends Component {
 
           this.setState({ room_id, initLevel: 2 })
 
+          const roomCreatedMsg = {
+            _id: uuidv4(),
+            type: 'system',
+            msg: `chat ${room_id} created`,
+            room_id,
+            timestamp: Date.now()
+          }
+          postMessage(roomCreatedMsg)
+
         } else if (msg === 'J' || msg === 'j') {
           console.log('join');
 
