@@ -6,9 +6,10 @@ sockets.init = (server) => {
   io.on('connection', (socket) => {
     console.log('a new user connected');
 
-    socket.on('join room', room_id => {
-      console.log(`${socket.id} joined room ${room_id}`);
-      socket.join(room_id);
+    socket.on('join room', data => {
+      console.log(`${socket.id} joined room ${data.room_id}`);
+      socket.join(data.room_id);
+      socket.broadcast.to(data.room_id).emit('receive msg', data);
     })
 
     socket.on('send msg', data => {

@@ -3,9 +3,9 @@ const io = require('socket.io-client')
 export default function () {
   const socket = io.connect('http://localhost:3001')
 
-  const joinRoom = (room_id) => {
-    console.log('join room', room_id);
-    socket.emit('join room', room_id);
+  const joinRoom = (data) => {
+    console.log('join room', data.room_id);
+    socket.emit('join room', data);
   }
 
   const sendMsg = (data) => {

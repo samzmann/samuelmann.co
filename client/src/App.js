@@ -111,13 +111,12 @@ class App extends Component {
           const newMsg = {
             _id: uuidv4(),
             type: 'system',
-            msg: `success! you are now in chat ${room_id} (use this code for invites)`,
+            msg: `set a username:`,
             timestamp: Date.now()
           }
           this.renderMsg(newMsg)
 
-          this.setState({ room_id, chatInitialized: true })
-          this.joinRoom(room_id)
+          this.setState({ room_id, initLevel: 2 })
 
         } else if (msg === 'J' || msg === 'j') {
           console.log('join');
@@ -157,13 +156,12 @@ class App extends Component {
               const newMsg = {
                 _id: uuidv4(),
                 type: 'system',
-                msg: `success! you are now in chat ${room_id} (use this code for invites)`,
+                msg: `set a username:`,
                 timestamp: Date.now()
               }
               this.renderMsg(newMsg)
 
-              this.setState({ room_id, chatInitialized: true })
-              this.joinRoom(room_id)
+              this.setState({ room_id, initLevel: 2 })
 
             } else {
               // chat does not exists
@@ -190,6 +188,32 @@ class App extends Component {
             this.setState({ initLevel: 0 })
           })
         break;
+      case 2:
+        console.log('set username', msg);
+
+        const username = msg
+
+        const newMsg = {
+          _id: uuidv4(),
+          type: 'system',
+          msg: `success! ${username}, you are now in chat ${this.state.room_id} (use this code for invites)`,
+          timestamp: Date.now()
+        }
+        this.renderMsg(newMsg)
+
+        this.setState({ username, chatInitialized: true })
+
+        const joinMsg = {
+          _id: uuidv4(),
+          type: 'system',
+          msg: `${username} just joined`,
+          room_id: this.state.room_id,
+          timestamp: Date.now()
+        }
+
+        this.joinRoom(joinMsg)
+
+        break;
       default:
 
     }
@@ -209,8 +233,8 @@ class App extends Component {
       })
   }
 
-  joinRoom = (room_id) => {
-    this.state.client.joinRoom(room_id)
+  joinRoom = (msg) => {
+    this.state.client.joinRoom(msg)
   }
 
   render() {
