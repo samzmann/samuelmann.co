@@ -1,5 +1,13 @@
 const axios = require('axios')
 
+exports.testConnection = () => {
+  return new Promise((resolve, reject) => {
+    axios.get('/api/testconnection')
+      .then(res => resolve(res.data))
+      .catch(err => reject(err))
+  })
+}
+
 exports.getAllMessages = () => {
   return new Promise((resolve, reject) => {
     axios.get('/api')

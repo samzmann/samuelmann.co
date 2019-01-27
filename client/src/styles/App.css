@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:300');
 
 .App {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 50px;
   background: #282828;
   color: #66ff66;
@@ -11,8 +14,24 @@
   margin-bottom: 5px;
 }
 
+.App-msg-holder {
+  display: flex;
+  flex-direction: column;
+}
+
 .App-usrmsg {
   color: #66ff66;
+}
+
+.App-username {
+  margin-top: 20px;
+  display: flex;
+  align-self: flex-start;
+  border-bottom: 1px dotted #66ff66;
+}
+
+.App-username::after {
+  content: ':'
 }
 
 .App-sysmsg {

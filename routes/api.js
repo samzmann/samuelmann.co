@@ -15,6 +15,10 @@ router.get('/', function(req, res, next) {
     })
 });
 
+router.get('/testconnection', function(req, res, next) {
+  res.json({status: 'ok'})
+});
+
 router.post('/chat', function(req, res, next) {
   console.log(req.body);
   Message.find({"room_id": req.body.room_id}).exec((err, results) => {

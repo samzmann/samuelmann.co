@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './styles/App.css';
 import MsgForm from './components/MsgForm'
-import { getAllMessages, postMessage, checkIfChatExists } from './utils'
+import { testConnection, getAllMessages, postMessage, checkIfChatExists } from './utils'
 import socket from './socket'
 import uuidv4 from 'uuid/v4'
 
@@ -11,12 +11,17 @@ class App extends Component {
     messages: [],
     client: socket(),
     room_id: null,
+    username: null,
+    connectionOk: false,
     chatInitialized: false,
     initLevel: 0
   }
 
   componentDidMount(){
-    this.state.client.receiveMsg(this.receiveMsg)
+
+    testConnection()
+      .then(res => {
+        console.log(res);
 
         const newMsg = {
           _id: uuidv4(),
@@ -25,6 +30,21 @@ class App extends Component {
           timestamp: Date.now()
         }
         this.renderMsg(newMsg)
+        this.setState({connectionOk: true})
+        this.state.client.receiveMsg(this.receiveMsg)
+      })
+      .catch(err => {
+        console.log(err)
+        const newMsg = {
+          _id: uuidv4(),
+          type: 'system',
+          msg: "server error: please reload the page (ಥ﹏ಥ)",
+          timestamp: Date.now()
+        }
+        this.renderMsg(newMsg)
+      })
+
+
 
 
     // getAllMessages()
@@ -65,7 +85,16 @@ class App extends Component {
       const dM1 = messages[index-1] ? new Date(messages[index-1].timestamp) : null
       const showDateInfo = !dM1 || ((d - dM1) > 60000) || dM1 > d
 
-      return <div key={msg._id} className={`App-line ${msg.type === 'user' ? "App-usrmsg" : "App-sysmsg"}`}>{showDateInfo ? `[${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours() < 10 ? '0' + d.getHours() : d.getHours()}:${d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes()}]` : ''} {msg.msg}</div>
+      const showUsername = msg.type === 'user' && msg.sender && (messages[index-1].sender !== msg.sender)
+
+      return (
+        <div key={msg._id} className="App-msg-holder">
+          {showUsername &&
+            <div className="App-line App-username">{msg.sender}</div>
+          }
+          <div className={`App-line ${msg.type === 'user' ? "App-usrmsg" : "App-sysmsg"}`}>{showDateInfo ? `[${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours() < 10 ? '0' + d.getHours() : d.getHours()}:${d.getMinutes() < 10 ? '0' + d.getMinutes() : d.getMinutes()}]` : ''} {msg.msg}</div>
+        </div>
+      )
     })
   }
 
@@ -76,13 +105,15 @@ class App extends Component {
       type: msg.type,
       msg: msg.msg,
       room_id: this.state.room_id,
+      sender: msg.type === 'user' ? this.state.username : null,
       timestamp: msg.timestamp
     }
     this.renderMsg(newMsg)
-      .then(() => {
+      .then(messages => {
+        console.log(messages);
         if (this.state.chatInitialized) {
           this.sendMsg(newMsg)
-        } else {
+        } else if (this.state.connectionOk) {
           this.chatInit(msg.msg)
         }
       })

@@ -1,6 +1,7 @@
 .MsgForm-form {
   display: flex;
   flex-direction: column;
+  align-self: stretch;
   align-items: flex-start;
 }
 
