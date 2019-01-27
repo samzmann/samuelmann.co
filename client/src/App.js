@@ -1,46 +1,55 @@
 import React, { Component } from 'react';
 import './styles/App.css';
 import MsgForm from './components/MsgForm'
-import { getAllMessages } from './utils'
+import { getAllMessages, postMessage, checkIfChatExists } from './utils'
 import socket from './socket'
+import uuidv4 from 'uuid/v4'
 
 class App extends Component {
 
   state = {
     messages: [],
     client: socket(),
-    room_id: null
+    room_id: null,
+    chatInitialized: false,
+    initLevel: 0
   }
 
   componentDidMount(){
-
-    console.log(this.state.client);
-
     this.state.client.receiveMsg(this.receiveMsg)
 
-    getAllMessages()
-      .then(res => {
         const newMsg = {
+          _id: uuidv4(),
           type: 'system',
-          msg: "welcome, let's chat",
+          msg: "welcome, do you want to create (C) or join (J) a chat?",
           timestamp: Date.now()
         }
-        this.addNewMessage(newMsg)
-          .then(messages => {
-            console.log(messages);
-            console.log(res);
-            this.setState({ messages: [...this.state.messages, ...res] })
-          })
-      })
-      .catch(err => {
-        console.log(err)
-        const newMsg = {
-          type: 'system',
-          msg: 'server error, please reload page (ಥ﹏ಥ)',
-          timestamp: Date.now()
-        }
-        this.addNewMessage(newMsg)
-      })
+        this.renderMsg(newMsg)
+
+
+    // getAllMessages()
+    //   .then(res => {
+    //     const newMsg = {
+    //       type: 'system',
+    //       msg: "welcome, let's chat",
+    //       timestamp: Date.now()
+    //     }
+    //     this.renderMsg(newMsg)
+    //       .then(messages => {
+    //         console.log(messages);
+    //         console.log(res);
+    //         this.setState({ messages: [...this.state.messages, ...res] })
+    //       })
+    //   })
+    //   .catch(err => {
+    //     console.log(err)
+    //     const newMsg = {
+    //       type: 'system',
+    //       msg: 'server error, please reload page (ಥ﹏ಥ)',
+    //       timestamp: Date.now()
+    //     }
+    //     this.renderMsg(newMsg)
+    //   })
 
   }
 
@@ -60,37 +69,141 @@ class App extends Component {
     })
   }
 
-  addNewMessage = (msg) => {
-    return new Promise((resolve, reject) => {
-      const { messages } = this.state
-      const newMsg = {
-        _id: messages.length,
-        type: msg.type,
-        msg: msg.msg,
-        room_id: this.state.room_id,
-        timestamp: msg.timestamp
-      }
-      this.setState({ messages: [...this.state.messages, newMsg] }, () => {
-        resolve(this.state.messages)
-      })
-    })
-  }
-
-  sendMsg = (msg) => {
+  handleSubmitMsg = (msg) => {
     const { messages } = this.state
     const newMsg = {
-      _id: messages.length,
+      _id: uuidv4(),
       type: msg.type,
       msg: msg.msg,
       room_id: this.state.room_id,
       timestamp: msg.timestamp
     }
-    this.state.client.sendMsg(newMsg)
+    this.renderMsg(newMsg)
+      .then(() => {
+        if (this.state.chatInitialized) {
+          this.sendMsg(newMsg)
+        } else {
+          this.chatInit(msg.msg)
+        }
+      })
+  }
+
+  renderMsg = (msg) => {
+    return new Promise((resolve, reject) => {
+      this.setState({ messages: [...this.state.messages, msg] }, () => {
+        resolve(this.state.messages)
+      })
+    })
+  }
+
+  chatInit = (msg) => {
+    switch (this.state.initLevel) {
+      case 0:
+        if (msg === 'C' || msg === 'c') {
+          console.log('create');
+
+          var room_id = ''
+          const chars = '0123456789abcdefghijklmnopqrstuvwxyz'
+          for (var i = 0; i < 5; i++) {
+            room_id += chars[Math.floor(Math.random() * chars.length)]
+          }
+
+          const newMsg = {
+            _id: uuidv4(),
+            type: 'system',
+            msg: `success! you are now in chat ${room_id} (use this code for invites)`,
+            timestamp: Date.now()
+          }
+          this.renderMsg(newMsg)
+
+          this.setState({ room_id, chatInitialized: true })
+          this.joinRoom(room_id)
+
+        } else if (msg === 'J' || msg === 'j') {
+          console.log('join');
+
+          this.setState({ initLevel: 1 })
+          const newMsg = {
+            _id: uuidv4(),
+            type: 'system',
+            msg: `enter the code of the chat you want to join.`,
+            timestamp: Date.now()
+          }
+          this.renderMsg(newMsg)
+
+        } else {
+          console.log('wrong input');
+
+          const newMsg = {
+            _id: uuidv4(),
+            type: 'system',
+            msg: `error: please enter C to create a chat or J to join a chat.`,
+            timestamp: Date.now()
+          }
+          this.renderMsg(newMsg)
+        }
+        break;
+      case 1:
+        console.log('make api request to see if chat exists');
+
+        checkIfChatExists(msg)
+          .then(res => {
+            console.log(res)
+            if (res.data.length > 0) {
+              // chat exists
+
+              const room_id = msg
+
+              const newMsg = {
+                _id: uuidv4(),
+                type: 'system',
+                msg: `success! you are now in chat ${room_id} (use this code for invites)`,
+                timestamp: Date.now()
+              }
+              this.renderMsg(newMsg)
+
+              this.setState({ room_id, chatInitialized: true })
+              this.joinRoom(room_id)
+
+            } else {
+              // chat does not exists
+              const newMsg = {
+                _id: uuidv4(),
+                type: 'system',
+                msg: `this chat does not exist. please enter C to create a chat or J to join a chat.`,
+                timestamp: Date.now()
+              }
+              this.renderMsg(newMsg)
+              this.setState({ initLevel: 0 })
+            }
+          })
+          .catch(err => {
+            console.log(err)
+            // chat does not exists
+            const newMsg = {
+              _id: uuidv4(),
+              type: 'system',
+              msg: `error: please enter C to create a chat or J to join a chat.`,
+              timestamp: Date.now()
+            }
+            this.renderMsg(newMsg)
+            this.setState({ initLevel: 0 })
+          })
+        break;
+      default:
+
+    }
+  }
+
+  sendMsg = (msg) => {
+    console.log('sending', msg);
+    this.state.client.sendMsg(msg)
+    postMessage(msg)
   }
 
   receiveMsg = (data) => {
     console.log(data);
-    this.addNewMessage(data)
+    this.renderMsg(data)
       .then(messages => {
         console.log('success!');
       })
@@ -104,8 +217,7 @@ class App extends Component {
     return (
       <div className="App">
         {this.renderMessages()}
-        <MsgForm addNewMessage={this.addNewMessage} sendMsg={this.sendMsg}/>
-        <button onClick={() => {this.joinRoom(this.state.room_id)}}>Join room</button>
+        <MsgForm handleSubmitMsg={this.handleSubmitMsg} chatInitialized={this.state.chatInitialized}/>
       </div>
     );
   }

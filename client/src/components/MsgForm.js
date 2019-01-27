@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import '../styles/MsgForm.css';
-import { postMessage } from '../utils'
 
 export default class MsgForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {value: ''}
+    this.state = {
+      value: '',
+      chatInitialized: props.chatInitialized
+    }
   }
 
   componentDidMount(){
@@ -25,12 +27,7 @@ export default class MsgForm extends React.Component {
         timestamp: Date.now()
       }
 
-      this.props.addNewMessage(data)
-      this.props.sendMsg(data)
-
-      // postMessage(data)
-      //   .then(() => this.setState({ value: '' }))
-      //   .catch(err => console.log(err))
+      this.props.handleSubmitMsg(data)
       this.setState({ value: '' })
     }
     event.preventDefault();

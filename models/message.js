@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 var MessageSchema = new Schema({
   msg             : { type: String },
   type            : { type: String },
+  room_id         : { type: String },
   timestamp       : { type: Number }
 })
 
