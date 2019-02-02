@@ -4,21 +4,28 @@ var rows, cols
 var cellSize = 20;
 var cells = []
 
+createCellGrid = (w, h, cs) => {
+  const rows = h / cs
+  const cols = w / cs
+  const arr = []
+
+  for (var i = 0; i < rows; i++) {
+    const y = i * (cs)
+    for (var j = 0; j < cols; j++) {
+      const x = j * cs
+      arr.push(new cell(x, y, cs))
+    }
+  }
+
+  return arr
+}
+
 setup = () => {
   var canvas = createCanvas(windowWidth, windowHeight)
   canvas.parent('bkg-sketch-holder')
   frameRate(20)
 
-  rows = height / cellSize
-  cols = width / cellSize
-
-  for (var i = 0; i < rows; i++) {
-    const y = i * (cellSize)
-    for (var j = 0; j < cols; j++) {
-      const x = j * cellSize
-      cells.push(new cell(x, y, cellSize))
-    }
-  }
+  cells = createCellGrid(width, height, cellSize)
 }
 
 draw = () => {
@@ -67,4 +74,9 @@ function cell(x, y, s, isFull){
     rect(this.x, this.y, this.s, this.s)
   }
 
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  cells = createCellGrid(width, height, cellSize)
 }
