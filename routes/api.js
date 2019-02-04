@@ -3,16 +3,17 @@ var router = express.Router();
 var Message = require('../models/message');
 
 router.get('/', function(req, res, next) {
-  Message
-    .find()
-    .exec((err, results) => {
-      if (err) {
-        console.log(err);
-        res.send(err)
-        return handleError(err)
-      }
-      res.json(results)
-    })
+  // Message
+  //   .find()
+  //   .exec((err, results) => {
+  //     if (err) {
+  //       console.log(err);
+  //       res.send(err)
+  //       return handleError(err)
+  //     }
+  //     res.json(results)
+  //   })
+  res.json({status: 'ok'})
 });
 
 router.get('/testconnection', function(req, res, next) {
