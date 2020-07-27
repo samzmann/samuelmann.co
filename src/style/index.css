@@ -1,0 +1,30 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@import "header.css";
+@import "form.css";
+@import "button.css";
+
+body {
+    @apply antialiased text-gray-900;
+}
+
+ol {
+    @apply list-decimal;
+}
+
+code {
+    @apply font-semibold bg-gray-200 text-gray-700 font-mono p-1 rounded;
+}
+
+pre {
+    @apply bg-gray-200 text-gray-700 font-mono p-2 rounded;
+
+}
+
+/*a {*/
+/*    text-decoration: underline;*/
+/*}*/

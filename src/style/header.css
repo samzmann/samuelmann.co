@@ -1,0 +1,35 @@
+.header-bkg {
+    @apply bg-blue-500 flex flex-row items-center justify-between p-1;
+}
+
+.header-links-div {
+    @apply flex flex-row items-center justify-between;
+}
+
+.header-login {
+    @apply border-solid border border-gray-100 rounded px-4 py-1;
+}
+.header-login:hover {
+    @apply bg-white cursor-pointer;
+}
+
+.header-link {
+    @apply ml-4 px-3 py-2 rounded-md font-medium leading-5 text-gray-300 transition duration-150 ease-in-out;
+}
+
+.header-link:hover {
+    @apply text-white bg-gray-700;
+}
+
+.header-link:focus {
+    @apply outline-none text-white bg-gray-700;
+}
+
+
+.header-btn-highlight {
+    @apply border border-gray-500;
+}
+
+.header-btn-highlight:hover {
+    @apply border-transparent;
+}
