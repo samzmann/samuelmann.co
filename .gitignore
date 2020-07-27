@@ -65,3 +65,5 @@ client/build
 
 # config files
 config
+
+.idea
