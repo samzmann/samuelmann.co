@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 
 import { HeaderLogo } from './Nav/HeaderLogo'
-import { NavNoAuth, NavNoAuthMobile } from './Nav/NavNoAuth'
+import { NavNoAuthMobile } from './Nav/NavNoAuth'
 import { GlobalStateContext } from '../context/globalContext'
 
 const Header = () => {
@@ -10,8 +10,8 @@ const Header = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-gray-800 shadow">
-      {/* Desktop Nav */}
-      <div className="max-w-7xl mx-auto px-2 md:px-6 lg:px-8">
+      {/* Top Bar*/}
+      <div className="max-w-7xl mx-auto px-2 md:hidden">
         <div className="relative flex items-center justify-between h-16">
           {/* Toggle for mobile menu*/}
           <div className="absolute inset-y-0 left-0 flex items-center md:hidden">
@@ -43,13 +43,11 @@ const Header = () => {
 
           <div className="flex-1 flex items-center justify-center md:items-stretch md:justify-between">
             <HeaderLogo />
-            <NavNoAuth />
           </div>
-          {/* TODO: re-add avatar here later */}
         </div>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile Nav that appears when toggled */}
       <div className={`${showMobileNav ? 'block' : 'hidden'} md:hidden`}>
         <NavNoAuthMobile />
       </div>
