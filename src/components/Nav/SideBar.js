@@ -4,7 +4,7 @@ import { NavNoAuth } from './NavNoAuth'
 export const SideBar = ({ content }) => (
   <div className="fixed flex h-screen w-screen">
     {/* Fixed sidebar */}
-    <div className="hidden md:block w-64 px-2 md:px-4 lg:px-6 pt-2 pb-3 border-r-2 border-gray-200">
+    <div className="hidden md:block w-64">
       <NavNoAuth />
     </div>
     {/* Scroll wrapper */}

@@ -9,7 +9,7 @@ const Header = () => {
   const toggleMobileNav = () => setShowMobileNav(prev => !prev)
 
   return (
-    <nav className="sticky top-0 z-50 bg-gray-800 shadow">
+    <nav className="sticky top-0 z-50 shadow">
       {/* Top Bar*/}
       <div className="max-w-7xl mx-auto px-2 md:hidden">
         <div className="relative flex items-center justify-between h-16">
